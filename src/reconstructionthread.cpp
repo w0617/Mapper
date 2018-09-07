@@ -65,6 +65,10 @@ void ReconstructionThread::SendImageAndPose(StereoImage::StereoImageParameters &
 void ReconstructionThread::run()
 {
     clock_t startTime,endTime;
+
+    //wait for load stereo images;
+    while(!StereoImage::waitForReconstruction) usleep(1);
+
     int32_t d_width  = m_stereoImage->width;
     int32_t d_height = m_stereoImage->height;
 

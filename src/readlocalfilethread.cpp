@@ -152,7 +152,7 @@ void ReadLocalFileThread::run()
 
             //wait reconstruction
             while( StereoImage::waitForReconstruction ) usleep(1);
-            StereoImage::waitForReconstruction = true;
+
 
             //Get left and right image
             m_stereo->GetKittiImages(m_kittiImage, m_kittiImagePath, i);
@@ -168,7 +168,8 @@ void ReadLocalFileThread::run()
             m_stereo->SetStereoImage(kittiRightImageData, m_kittiImage[1].m_image->width, m_kittiImage[1].m_image->height,
                                      m_kittiImage[1].m_image->widthStep, false, m_kittiImage[1].m_capturedTime);
 
-        //    usleep(1e6/fps);
+            //send the stereo images . need to compute disparity
+            StereoImage::waitForReconstruction = true;
 
             //Save depth image to .pgm
             if( StereoImage::saveToPgm )
