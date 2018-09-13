@@ -1,8 +1,8 @@
 #ifndef STEREOIMAGE_H
 #define STEREOIMAGE_H
 
-#include <QObject>
-#include <QImage>
+#include <QtCore/QObject>
+#include <QtGui/QImage>
 #include <sys/time.h>
 #include <iostream>
 #include <string>

@@ -1,7 +1,7 @@
 #ifndef CALIBRATIONPARAMETERS_H
 #define CALIBRATIONPARAMETERS_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>

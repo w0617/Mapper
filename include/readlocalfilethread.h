@@ -1,10 +1,10 @@
 #ifndef READLOCALFILETHREAD_H
 #define READLOCALFILETHREAD_H
 
-#include <QObject>
-#include <QThread>
-#include <QString>
-#include <QImage>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
+#include <QtCore/QString>
+#include <QtGui/QImage>
 #include "include/calibrationparameters.h"
 #include "include/stereoimage.h"
 #include "libviso2/src/timer.h"

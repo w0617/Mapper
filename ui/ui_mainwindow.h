@@ -472,7 +472,7 @@ public:
         label_UniquenessRatio->setGeometry(QRect(360, 220, 41, 31));
         verticalLayoutWidget_13 = new QWidget(centralWidget);
         verticalLayoutWidget_13->setObjectName(QString::fromUtf8("verticalLayoutWidget_13"));
-        verticalLayoutWidget_13->setGeometry(QRect(1370, 670, 128, 211));
+        verticalLayoutWidget_13->setGeometry(QRect(1370, 670, 142, 211));
         verticalLayout_24 = new QVBoxLayout(verticalLayoutWidget_13);
         verticalLayout_24->setSpacing(6);
         verticalLayout_24->setContentsMargins(11, 11, 11, 11);
@@ -505,7 +505,7 @@ public:
 
         verticalLayoutWidget_2 = new QWidget(centralWidget);
         verticalLayoutWidget_2->setObjectName(QString::fromUtf8("verticalLayoutWidget_2"));
-        verticalLayoutWidget_2->setGeometry(QRect(1070, 670, 128, 211));
+        verticalLayoutWidget_2->setGeometry(QRect(1070, 670, 139, 211));
         verticalLayout_11 = new QVBoxLayout(verticalLayoutWidget_2);
         verticalLayout_11->setSpacing(6);
         verticalLayout_11->setContentsMargins(11, 11, 11, 11);
@@ -546,7 +546,7 @@ public:
 
         verticalLayoutWidget_3 = new QWidget(centralWidget);
         verticalLayoutWidget_3->setObjectName(QString::fromUtf8("verticalLayoutWidget_3"));
-        verticalLayoutWidget_3->setGeometry(QRect(1220, 670, 128, 211));
+        verticalLayoutWidget_3->setGeometry(QRect(1220, 670, 144, 211));
         verticalLayout_14 = new QVBoxLayout(verticalLayoutWidget_3);
         verticalLayout_14->setSpacing(6);
         verticalLayout_14->setContentsMargins(11, 11, 11, 11);
@@ -667,6 +667,7 @@ public:
          << QApplication::translate("MainWindow", "    SGBM-Mode", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "     BM-Mode", 0, QApplication::UnicodeUTF8)
          << QApplication::translate("MainWindow", "     SPS-Mode", 0, QApplication::UnicodeUTF8)
+         << QApplication::translate("MainWindow", "    Mono-Mode", 0, QApplication::UnicodeUTF8)
         );
         SaveVideoButton->setText(QApplication::translate("MainWindow", "SaveVideo", 0, QApplication::UnicodeUTF8));
         ShowPosesButton->setText(QApplication::translate("MainWindow", "ShowPoses", 0, QApplication::UnicodeUTF8));

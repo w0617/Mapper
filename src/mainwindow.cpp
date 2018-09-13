@@ -1,5 +1,5 @@
 #include "include/mainwindow.h"
-#include "ui_mainwindow.h"
+#include "ui/ui_mainwindow.h"
 #include <math.h>
 
 //constructer: initialize all pointers.
@@ -609,7 +609,7 @@ void MainWindow::on_Slider_SADWindowSizeSG_sliderReleased()
 //set slider and algorithm parameters.
 void MainWindow::setUp()
 {
-    StereoImage::saveToPgm = true;
+    StereoImage::saveToPgm = false;
     StereoImage::depthImageShow = true;
 
     QPalette pa;

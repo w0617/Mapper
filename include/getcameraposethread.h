@@ -1,8 +1,8 @@
 #ifndef GETCAMERAPOSETHREAD_H
 #define GETCAMERAPOSETHREAD_H
 
-#include <QObject>
-#include <QThread>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
 #include <math.h>
 
 #include "include/calibrationparameters.h"
@@ -11,7 +11,7 @@
 
 #include "libviso2/src/viso_stereo.h"
 #include "libviso2/src/timer.h"
-#include "include/System.h"
+// #include "include/System.h"
 
 class GetCameraPoseThread : public QThread
 {

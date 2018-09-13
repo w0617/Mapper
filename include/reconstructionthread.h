@@ -1,8 +1,8 @@
 #ifndef RECONSTRUCTION_H
 #define RECONSTRUCTION_H
 
-#include <QObject>
-#include <QThread>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
 #include <time.h>
 
 #include "include/calibrationparameters.h"

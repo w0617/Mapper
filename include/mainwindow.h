@@ -1,11 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QDialog>
-#include <QMutex>
-#include <QFileDialog>
-#include <QLabel>
+#include <QtGui/QMainWindow>
+#include <QtGui/QDialog>
+#include <QtCore/QMutex>
+#include <QtGui/QFileDialog>
+#include <QtGui/QLabel>
 #include <sys/time.h>
 #include <opencv/highgui.h>
 
@@ -64,7 +64,7 @@ private:
     GetCameraPoseThread *m_getPoseThread;
     ReconstructionThread *m_3dReconstructionThread;
     RealTimeCamThread *m_realTimeCamThread;
-    ORB_SLAM2::System *m_slam;
+//     ORB_SLAM2::System *m_slam;
 
 
     bool m_readingLocalFileFlag;

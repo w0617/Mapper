@@ -2,12 +2,12 @@
 #define MODELPAINTING_H
 
 #include <GL/glew.h>
-#include <QWidget>
+#include <QtGui/QWidget>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <QGLWidget>
-#include <QMouseEvent>
-#include <QKeyEvent>
+#include <QtOpenGL/QGLWidget>
+#include <QtGui/QMouseEvent>
+#include <QtGui/QKeyEvent>
 #include <deque>
 #include <iostream>
 #include <math.h>

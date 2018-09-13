@@ -1,9 +1,9 @@
 #ifndef REALTIMECAMTHREAD_H
 #define REALTIMECAMTHREAD_H
 
-#include <QObject>
-#include <QThread>
-#include <QImage>
+#include <QtCore/QObject>
+#include <QtCore/QThread>
+#include <QtGui/QImage>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -22,7 +22,7 @@
 #include "include/stereoimage.h"
 #include "include/loitorusbcam.h"
 #include "include/loitorimu.h"
-#include "include/System.h"
+// #include "include/System.h"
 
 const static std::string LOITOR_CAMERA_SETTING_PATH = "/Loitor_VISensor_Setups.txt";
 const static std::string LOITOR_CALIB_FILE_PATH = "/StereoCalib.yml";
@@ -60,7 +60,7 @@ public:
     bool CheckRemapFlagStatus() {return m_remapFlag;}
     bool CheckCalibFlagStatus() {return m_calibFlag;}
     void CloseCamera() { close_img_viewer = true; }
-    void GetORBSLAM(ORB_SLAM2::System *slam){m_slam=slam;}
+//     void GetORBSLAM(ORB_SLAM2::System *slam){m_slam=slam;}
 
     bool close_img_viewer;
     bool visensor_Close_IMU_viewer;
@@ -82,7 +82,7 @@ protected:
 private:
 
     StereoImage *m_stereo;
-    ORB_SLAM2::System *m_slam;
+//     ORB_SLAM2::System *m_slam;
 
     bool m_pickedNewCamImage;
     bool m_remapFlag;

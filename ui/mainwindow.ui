@@ -1039,7 +1039,7 @@
      <rect>
       <x>1370</x>
       <y>670</y>
-      <width>128</width>
+      <width>142</width>
       <height>211</height>
      </rect>
     </property>
@@ -1086,7 +1086,7 @@
      <rect>
       <x>1070</x>
       <y>670</y>
-      <width>128</width>
+      <width>139</width>
       <height>211</height>
      </rect>
     </property>
@@ -1157,7 +1157,7 @@
      <rect>
       <x>1220</x>
       <y>670</y>
-      <width>128</width>
+      <width>144</width>
       <height>211</height>
      </rect>
     </property>
@@ -1182,6 +1182,11 @@
        <item>
         <property name="text">
          <string>     SPS-Mode</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>    Mono-Mode</string>
         </property>
        </item>
       </widget>
