@@ -50,6 +50,16 @@ SGBlockMatching::SGBlockMatching():sgbm(cv::StereoSGBM::create(0,256,9,0,0,1,63)
     this->sgbm->setMode(cv::StereoSGBM::MODE_SGBM);
 }
 
+void SGBlockMatching::initSgbmParameter()
+{
+    this->SetMinDisparity(0);
+    this->SetNumberOfDisparities(48);
+    this->SetSADWindowSize(9);
+    this->SetSpeckleRange(32);
+    this->SetSpeckleWindowSize(100);
+    this->SetUniquenessRatio(15);
+}
+
 void SGBlockMatching::SetMinDisparity(int value)
 {
     this->sgbm->setMinDisparity(value);

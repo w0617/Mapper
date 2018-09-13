@@ -152,7 +152,7 @@ void ReadLocalFileThread::run()
 
             //wait reconstruction
             while( StereoImage::waitForReconstruction ) usleep(1);
-
+            
 
             //Get left and right image
             m_stereo->GetKittiImages(m_kittiImage, m_kittiImagePath, i);

@@ -16,7 +16,8 @@ INCLUDE_DIRECTORIES(/usr/include/eigen3
                     /usr/local/include/opencv
                     /usr/local/include/opencv2 
 #                      /home/w/Desktop/SLAM/ORB_SLAM2/include 
-                    ${PROJECT_SOURCE_DIR}/include )
+                    ${PROJECT_SOURCE_DIR}/include
+                    ${PROJECT_SOURCE_DIR}/Disparity )
 
 LINK_DIRECTORIES( ${PROJECT_SOURCE_DIR}/lib)
 

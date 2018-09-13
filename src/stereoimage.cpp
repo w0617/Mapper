@@ -9,6 +9,7 @@ double StereoImage::cameraBaseline = 0;
 char StereoImage::computeDisparityMode = ELAS_MODE;
 bool StereoImage::saveToPgm = false;
 bool StereoImage::depthImageShow = true;
+std::string g_LeftImageName;
 
 StereoImage::StereoImage(QObject *parent):QObject(parent)
 {
@@ -243,6 +244,7 @@ void StereoImage::GetKittiImages(KittiImage m_kittiImage[2], std::string m_kitti
     ss << std::setw(6) << std::setfill('0') << index << ".png";
     std::string leftImagePath = m_kittiImagePath + "/image_0/" + ss.str();
     std::string rightImagePath = m_kittiImagePath + "/image_1/" + ss.str();
+    g_LeftImageName = leftImagePath;
 
     m_kittiImage[0].m_image = cvLoadImage(leftImagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
     m_kittiImage[1].m_image = cvLoadImage(rightImagePath.c_str(), CV_LOAD_IMAGE_GRAYSCALE);

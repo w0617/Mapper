@@ -34,6 +34,43 @@ ReconstructionThread::ReconstructionThread(CalibrationParameters *calib, StereoI
         m_cv = m_calib->m_loitorCalibParam.m_cv; // principal point (v-coordinate) in pixels
         m_baseline = m_calib->m_loitorCalibParam.m_baseline; // baseline in meters
     }
+    
+    
+    // init the compute disparity mode parameters.
+    this->sps.initSpsParameter();
+    this->bm.initBmParameter();
+    this->sgbm.initSgbmParameter();
+    // elas
+    this->param.postprocess_only_left = true;
+    this->param.filter_adaptive_mean = true;
+    this->param.support_texture = 30;
+
+    //MonoDepth
+    //=======================Python MonoDepth======================
+    Py_Initialize();
+    
+    string projectPath, mainModulePath, kittiModulePath;
+    char *path;
+    projectPath     = getcwd(path, 100);
+    mainModulePath  = "sys.path.append('" + projectPath + "/Disparity/MonoDepth/')";
+    kittiModulePath = projectPath + "/Disparity/MonoDepth/model_kitti/model_kitti" ;
+    // Find monodepth.py
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString(mainModulePath.data());  
+            
+    // import monodepth.py
+    this->pModule = PyImport_ImportModule("monodepth");
+    if (this->pModule != NULL) 
+    {   // find def main() 
+        this->pFunc   = PyObject_GetAttrString(this->pModule, "main");
+        this->pArg = PyTuple_New(2);
+    }
+    else
+        printf("\n\nCan't import monodepth !\n\n ");
+    
+    // setting the --checkpoint_path 
+    this->pName = PyString_FromString(kittiModulePath.data());
+    PyTuple_SetItem(this->pArg, 1, this->pName);
 }
 
 ReconstructionThread::~ReconstructionThread()
@@ -44,7 +81,6 @@ ReconstructionThread::~ReconstructionThread()
         m_stereoImage = 0;
     }
     m_mapPoints.clear();
-
 }
 
 void ReconstructionThread::SendImageAndPose(StereoImage::StereoImageParameters &s, libviso2_Matrix H)
@@ -62,6 +98,51 @@ void ReconstructionThread::SendImageAndPose(StereoImage::StereoImageParameters &
     m_HomographyMatrix = H;
 }
 
+void ReconstructionThread::bm_arrayToMat(uchar* arr, cv::Mat &image)
+{
+    for(int i=0; i<m_stereoImage->height; i++)
+        for(int j=0; j<m_stereoImage->step; j++)
+        { image.at<uchar>(i,j) = *arr, arr++; }
+}
+
+void ReconstructionThread::bm_matToArray(cv::Mat image, float* arr)
+{
+    for(int i=0; i<m_stereoImage->height; i++)
+        for(int j=0; j<m_stereoImage->width; j++)
+        { *arr = image.at<float>(i,j); arr++; }
+}
+
+void ReconstructionThread::sps_arrayToPng(uchar* arr, png::image<png::rgb_pixel> &imagePng)
+{
+    for(int i=0; i<m_stereoImage->height; i++)
+        for(int j=0; j<m_stereoImage->step; j++)
+        {
+            png::rgb_pixel rgbPixel(*arr, *arr, *arr);
+            imagePng.set_pixel(j, i, rgbPixel);
+            arr++;
+        }
+}
+
+void ReconstructionThread::sps_pngToArrary(png::image<png::gray_pixel_16> &imagePng, float* arr)
+{
+    for(int i=0; i<m_stereoImage->height; i++)
+        for(int j=0; j<m_stereoImage->width; j++)
+        {   *arr = (imagePng.get_pixel(j, i) / 256.0); arr++;  }
+}
+
+void ReconstructionThread::mono_ndarrayToArray(PyObject *Return, float *arr)
+{
+    this->pReturnArray = (PyArrayObject *)PyList_GetItem(Return, 0);
+    int rows = this->pReturnArray->dimensions[0], cols = this->pReturnArray->dimensions[1];
+    for( int i = 0; i < rows; i++)
+        for( int j = 0; j < cols; j++)
+        {   
+            int16_t temp = static_cast<int16_t>(*(this->pReturnArray->data + i * this->pReturnArray->strides[0] + j * this->pReturnArray->strides[1]))  ;
+            if(temp <0) temp =256 +temp;
+            *arr = float(temp * 1.0); arr++;
+        }                    
+}
+
 void ReconstructionThread::run()
 {
     clock_t startTime,endTime;
@@ -69,52 +150,45 @@ void ReconstructionThread::run()
     //wait for load stereo images;
     while(!StereoImage::waitForReconstruction) usleep(1);
 
-    int32_t d_width  = m_stereoImage->width;
-    int32_t d_height = m_stereoImage->height;
+    int32_t d_width  = this->m_stereoImage->width;
+    int32_t d_height = this->m_stereoImage->height;
+    int32_t d_step   = this->m_stereoImage->step;    
 
     //free the disparity pointer.
-    if(m_stereoImage->D1 != 0)
-    {
-        free(m_stereoImage->D1);
-        m_stereoImage->D1 = 0;
-    }
-    m_stereoImage->D1 = (float*)malloc(d_width*d_height*sizeof(float));
+    if(this->m_stereoImage->D1 != 0)
+    {    free(this->m_stereoImage->D1); this->m_stereoImage->D1 = 0;  }
 
-    if(m_stereoImage->D2 != 0)
-    {
-        free(m_stereoImage->D2);
-        m_stereoImage->D2 = 0;
-    }
-    m_stereoImage->D2 = (float*)malloc(d_width*d_height*sizeof(float));
-
+    if(this->m_stereoImage->D2 != 0)
+    {    free(this->m_stereoImage->D2); this->m_stereoImage->D2 = 0;  }
+    
+    this->m_stereoImage->D1 = (float*)malloc(d_width*d_height*sizeof(float));
+    this->m_stereoImage->D2 = (float*)malloc(d_width*d_height*sizeof(float));
 
     //compute disparity mode,contain Elas, BM and SGBM.
-
     //init ELas
-    const int32_t dims[3] = {m_stereoImage->width,m_stereoImage->height,m_stereoImage->step};
-    Elas::parameters param(Elas::ROBOTICS);
-          param.postprocess_only_left = true;
-          param.filter_adaptive_mean = true;
-          param.support_texture = 30;
     Elas elas(param);
+    const int32_t dims[3] = {d_width, d_height, d_step};
 
     //init SGBM BM
-    Mat bm_leftImage(m_stereoImage->height, m_stereoImage->step, CV_8U);
-    Mat bm_rightImage(m_stereoImage->height, m_stereoImage->step, CV_8U);
+    Mat bm_leftImage( d_height, d_step, CV_8U);
+    Mat bm_rightImage( d_height, d_step, CV_8U);
 
-    bm_arrayToMat(m_stereoImage->I1, bm_leftImage);
-    bm_arrayToMat(m_stereoImage->I2, bm_rightImage);
+    bm_arrayToMat(this->m_stereoImage->I1, bm_leftImage);
+    bm_arrayToMat(this->m_stereoImage->I2, bm_rightImage);
 
     //init SPS_Stereo
-    sps.initSpsParameter();
-    png::image<png::rgb_pixel> sps_leftImage(m_stereoImage->step, m_stereoImage->height);
-    png::image<png::rgb_pixel> sps_rightImage(m_stereoImage->step, m_stereoImage->height);
+    png::image<png::rgb_pixel> sps_leftImage(d_step, d_height);
+    png::image<png::rgb_pixel> sps_rightImage(d_step, d_height);
     png::image<png::gray_pixel_16> segmentImage;
     png::image<png::gray_pixel_16> disparityImage;
 
-    sps_arrayToPng(m_stereoImage->I1, sps_leftImage);
-    sps_arrayToPng(m_stereoImage->I2, sps_rightImage);
+    sps_arrayToPng(this->m_stereoImage->I1, sps_leftImage);
+    sps_arrayToPng(this->m_stereoImage->I2, sps_rightImage);
+    
+    //init MonoDepth
 
+
+ 
     ////////////////////
     startTime = clock();
 
@@ -141,6 +215,14 @@ void ReconstructionThread::run()
             //sps.compute(__, left, right, segmentImage, disparityImage);
             sps.compute(superpixelTotal, sps_leftImage, sps_rightImage, segmentImage, disparityImage);
             this->sps_pngToArrary(disparityImage, m_stereoImage->D1);
+            break;
+        
+        case MONO_MODE:
+            // setting the --image_path   and run pFunc
+            this->pName = PyString_FromString(g_LeftImageName.data());
+            PyTuple_SetItem(this->pArg, 0, this->pName);
+            this->pReturn = PyEval_CallObject(this->pFunc, this->pArg);
+            this->mono_ndarrayToArray(this->pReturn, m_stereoImage->D1);
             break;
     }
 

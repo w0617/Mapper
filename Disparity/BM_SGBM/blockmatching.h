@@ -56,6 +56,8 @@ public:
 
     BlockMatching();
 
+    void initBmParameter();
+
     void SetPreFilterCap(int value);
 
     void SetPreFilterSize(int value);

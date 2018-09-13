@@ -52,6 +52,19 @@ BlockMatching::BlockMatching()
     this->bm->setDisp12MaxDiff(1);
 }
 
+void BlockMatching::initBmParameter()
+{
+    this->SetMinDisparity(0);
+    this->SetNumberOfDisparities(48);
+    this->SetPreFilterCap(31);
+    this->SetPreFilterSize(5);
+    this->SetSADWindowSize(9);
+    this->SetSpeckleRange(32);
+    this->SetSpeckleWindowSize(100);
+    this->SetTextureThreshold(10);
+    this->SetUniquenessRatio(15);
+}
+
 void BlockMatching::SetPreFilterCap(int value)
 {
     this->bm->setPreFilterCap(value);

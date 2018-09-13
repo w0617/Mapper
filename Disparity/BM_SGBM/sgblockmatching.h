@@ -56,6 +56,8 @@ class SGBlockMatching
 public:
 
     SGBlockMatching();
+    
+    void initSgbmParameter();
 
     void SetMinDisparity(int value);
 

@@ -191,6 +191,13 @@ void MainWindow::on_RecordCheckBox_clicked()
 void MainWindow::on_ExitButton_clicked()
 {
     std::cout<< "Exit mapper " << std::endl;
+    //close python
+//     Py_DECREF(m_3dReconstructionThread->pName);
+//     Py_DECREF(m_3dReconstructionThread->pModule);
+//     Py_DECREF(m_3dReconstructionThread->pFunc);
+//     Py_DECREF(m_3dReconstructionThread->pArg);
+//     Py_DECREF(m_3dReconstructionThread->pReturn);
+//     Py_Finalize();
     exit(0);
 }
 
@@ -347,6 +354,12 @@ void MainWindow::on_DisparityModeBox_activated(const QString &arg1)
     {
         this->m_stereo->computeDisparityMode = SPS_MODE;
         cout<<"SPS_MODE to compute disparity."<<endl;
+        this->slot_reset();
+    }
+    if( arg1 == "    Mono-Mode" )
+    {
+        this->m_stereo->computeDisparityMode = MONO_MODE;
+        cout<<"MONO_MODE to compute disparity."<<endl;
         this->slot_reset();
     }
 }
@@ -844,5 +857,10 @@ void MainWindow::ShowDepthImage()
     {
         this->ui->label_3->setText(QApplication::translate("MainWindow", "SPS", 0, QApplication::UnicodeUTF8));
         this->ui->BMDepthImage->setPixmap( QPixmap::fromImage(image) );
+    }
+    if( StereoImage::computeDisparityMode == MONO_MODE )
+    {
+        this->ui->label_2->setText(QApplication::translate("MainWindow", "Mono", 0, QApplication::UnicodeUTF8));
+        this->ui->SGBMDepthImage->setPixmap( QPixmap::fromImage(image) );
     }
 }

@@ -15,6 +15,9 @@
 #include "Disparity/BM_SGBM/sgblockmatching.h"
 #include "Disparity/SPS_Stereo/SPSStereo.h"
 
+#include <Python.h>
+#include <numpy/arrayobject.h>
+
 class ReconstructionThread : public QThread
 {
     Q_OBJECT
@@ -33,41 +36,24 @@ public:
 
     void PickupNewMap() { m_pickedNewMap = true; }
 
-    void bm_arrayToMat(uchar* arr, cv::Mat &image)
-    {
-        for(int i=0; i<m_stereoImage->height; i++)
-            for(int j=0; j<m_stereoImage->step; j++)
-            { image.at<uchar>(i,j) = *arr, arr++; }
-    }
-
-    void bm_matToArray(cv::Mat image, float* arr)
-    {
-        for(int i=0; i<m_stereoImage->height; i++)
-            for(int j=0; j<m_stereoImage->width; j++)
-            { *arr = image.at<float>(i,j); arr++; }
-    }
-
-    void sps_arrayToPng(uchar* arr, png::image<png::rgb_pixel> &imagePng)
-    {
-        for(int i=0; i<m_stereoImage->height; i++)
-            for(int j=0; j<m_stereoImage->step; j++)
-            {
-                png::rgb_pixel rgbPixel(*arr, *arr, *arr);
-                imagePng.set_pixel(j, i, rgbPixel);
-                arr++;
-            }
-    }
-
-    void sps_pngToArrary(png::image<png::gray_pixel_16> &imagePng, float* arr)
-    {
-        for(int i=0; i<m_stereoImage->height; i++)
-            for(int j=0; j<m_stereoImage->width; j++)
-            {   *arr = (imagePng.get_pixel(j, i) / 256.0); arr++;  }
-    }
-
+    void bm_arrayToMat(uchar* arr, cv::Mat &image);
+    void bm_matToArray(cv::Mat image, float* arr);
+    void sps_arrayToPng(uchar* arr, png::image<png::rgb_pixel> &imagePng);
+    void sps_pngToArrary(png::image<png::gray_pixel_16> &imagePng, float* arr);
+    void mono_ndarrayToArray(PyObject *Return, float *arr);
+    
+    Elas::parameters param;
     BlockMatching bm;
     SGBlockMatching sgbm;
     SPSStereo sps;
+
+    //Python Object
+    PyObject *pModule;
+    PyObject *pFunc;
+    PyObject *pArg;
+    PyObject *pName;
+    PyObject *pReturn;
+    PyArrayObject *pReturnArray;
 
 protected:
 

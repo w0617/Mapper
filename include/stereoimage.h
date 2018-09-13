@@ -29,6 +29,11 @@
 #define SGBM_MODE 1
 #define BM_MODE   2
 #define SPS_MODE  3
+#define MONO_MODE 4
+
+
+//global variety
+extern std::string g_LeftImageName;
 
 
 //OpenCV file form to save image
